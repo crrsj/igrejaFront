@@ -1,0 +1,75 @@
+   body {
+        background-color: #f5f5f5;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    .form-container {
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+        padding: 2rem;
+        margin-top: 1rem;
+        margin-bottom: 2rem;
+    }
+    .header {
+        background-color: #2e7d32;
+        color: white;
+        padding: 1.5rem;
+        border-radius: 8px;
+        margin-bottom: 2rem;
+        text-align: center;
+    }
+    .gold-text {
+        color: #ffd700;
+        font-weight: bold;
+    }
+    .btn-primary {
+        background-color: #2e7d32;
+        border: none;
+        padding: 10px 20px;
+        font-weight: 600;
+    }
+    .btn-primary:hover {
+        background-color: #1b5e20;
+    }
+    .form-label {
+        font-weight: 600;
+        color: #333;
+    }
+    .form-control, .form-select {
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        padding: 10px;
+    }
+    .form-control:focus, .form-select:focus {
+        border-color: #2e7d32;
+        box-shadow: 0 0 0 0.25rem rgba(46, 125, 50, 0.25);
+    }
+    /* --- Ícones (opcional) --- */
+    .bi {
+        margin-right: 8px;
+    }
+
+    .badge-pastor {
+    background-color: #2e7d32;
+    color: white;
+   }
+    .badge-diacono {
+    background-color: #ffd700;
+    color: #333;
+   }
+
+   .table-donations th {
+    background-color: #2e7d32;
+    color: white;
+   }
+    .table-donations tr:hover {
+    background-color: rgba(46, 125, 50, 0.1);
+   }
+
+    .event-card {
+    border-left: 4px solid #2e7d32;
+    transition: transform 0.2s;
+   }
+    .event-card:hover {
+    transform: translateY(-5px);
+   }

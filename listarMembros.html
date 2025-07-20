@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Listagem de Membros</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+  <style>
+    body {
+      background-color: #f4f6f9;
+    }
+    .container {
+      margin-top: 40px;
+    }
+    table {
+      background-color: #fff;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .btn-icon {
+      border: none;
+      background: none;
+      padding: 4px;
+      font-size: 1.2rem;
+    }
+    .btn-icon.edit {
+      color: #0d6efd;
+    }
+    .btn-icon.delete {
+      color: #dc3545;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2 class="text-center mb-4">Membros Cadastrados</h2>
+    <div class="table-responsive">
+      <table class="table table-bordered table-striped table-hover">
+        <thead class="table-dark">
+          <tr>
+            <th>Nome</th>
+            <th>Data Nasc.</th>
+            <th>Gênero</th>
+            <th>Telefone</th>
+            <th>Função</th>
+            <th>Ativo</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody id="tabelaMembros">
+          <!-- Linhas serão inseridas via JS -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+  async function carregarMembros() {
+  try {
+    const resposta = await fetch("http://localhost:8080/api/membros"); // Altere a URL conforme seu endpoint
+    if (!resposta.ok) {
+      throw new Error("Erro ao buscar membros: " + resposta.status);
+    }
+
+    const membros = await resposta.json();
+    const tabela = document.getElementById("tabelaMembros");
+    tabela.innerHTML = ""; // Limpa a tabela antes de inserir novos dados
+
+    membros.forEach(m => {
+      const linha = document.createElement("tr");
+
+      // A data já vem como "dd/MM/yyyy" se estiver anotada corretamente no backend
+      const dataFormatada = m.dataNascimento;
+
+      linha.innerHTML = `
+        <td>${m.nome}</td>
+        <td>${dataFormatada}</td>
+        <td>${m.genero}</td>
+        <td>${m.telefone}</td>
+        <td>${m.funcao}</td>
+        <td>${m.ativo ? "Sim" : "Não"}</td>
+        <td>
+          <button class="btn-icon edit" title="Editar" onclick="editarMembro(${m.id})">
+            <i class="bi bi-pencil-square"></i>
+          </button>
+          <button class="btn-icon delete" title="Excluir" onclick="excluirMembro(${m.id})">
+            <i class="bi bi-trash"></i>
+          </button>
+        </td>
+      `;
+
+      tabela.appendChild(linha);
+    });
+  } catch (erro) {
+    console.error("Erro ao carregar membros:", erro);
+    alert("Falha ao carregar membros.");
+  }
+}
+
+// Chamada inicial da função ao carregar a página
+window.addEventListener("DOMContentLoaded", carregarMembros);
+
+
+    function editarMembro(id) {
+      alert("Editar membro com ID: " + id);
+      // Aqui você poderá abrir um modal ou redirecionar para a página de edição
+    }
+
+    function excluirMembro(id) {
+      const confirmar = confirm("Deseja realmente excluir o membro com ID: " + id + "?");
+      if (confirmar) {
+        alert("Membro excluído (simulação)");
+        // Aqui você pode chamar o backend para deletar ou remover da tabela dinamicamente
+      }
+    }
+
+      
+  </script>
+</body>
+</html>
+

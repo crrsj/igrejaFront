@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Cadastro de Membro</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background-color: #f4f6f9;
+    }
+    .form-container {
+      background-color: #fff;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      margin-top: 50px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="form-container mx-auto col-md-8">
+      <h2 class="mb-4 text-center">Cadastro de Membro</h2>
+      <form id="formMembro">
+        <div class="mb-3">
+          <label for="nome" class="form-label">Nome completo</label>
+          <input type="text" class="form-control" id="nome" required>
+        </div>
+
+        <div class="mb-3">
+          <label for="dataNascimento" class="form-label">Data de nascimento</label>
+          <input type="date" class="form-control" id="dataNascimento" required>
+        </div>
+
+        <div class="mb-3">
+          <label for="genero" class="form-label">Gênero</label>
+          <select class="form-select" id="genero" required>
+            <option selected disabled>Selecione</option>
+            <option>MASCULINO</option>
+            <option>FEMININO</option>
+            <option>OUTRO</option>
+          </select>
+        </div>
+
+        <div class="mb-3">
+          <label for="telefone" class="form-label">Telefone</label>
+          <input type="tel" class="form-control" id="telefone" required>
+        </div>
+
+        <div class="mb-3">
+          <label for="email" class="form-label">E-mail</label>
+          <input type="email" class="form-control" id="email">
+        </div>
+       
+        <div class="mb-3">
+          <label for="funcao" class="form-label">Função</label>
+          <select class="form-select" id="funcao">
+            <option>PASTOR</option>
+            <option>OBREIRO</option>
+            <option>FIEL</option>
+            <option>VISITANTE</option>
+          </select>
+        </div>       
+
+        <div class="mb-3">
+          <label class="form-label">Está ativo?</label>
+          <div>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="ativo" id="ativoSim" value="Sim" checked>
+              <label class="form-check-label" for="ativoSim">Sim</label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="ativo" id="ativoNao" value="Não">
+              <label class="form-check-label" for="ativoNao">Não</label>
+            </div>
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary w-100">Cadastrar Membro</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+  document.getElementById("formMembro").addEventListener("submit", function(event) {
+  event.preventDefault();
+
+  const ativoSelecionado = document.querySelector('input[name="ativo"]:checked').value;
+  const ativoBoolean = ativoSelecionado === "Sim";
+
+  const membro = {
+    nome: document.getElementById("nome").value,
+    dataNascimento: document.getElementById("dataNascimento").value,
+    genero: document.getElementById("genero").value,
+    telefone: document.getElementById("telefone").value,
+    email: document.getElementById("email").value,  
+    funcao: document.getElementById("funcao").value,    
+    ativo: ativoBoolean
+  };
+
+  console.log("Enviando membro:", membro);
+
+  fetch("http://localhost:8080/api/membros", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(membro)
+  })
+  .then(response => {
+    if (!response.ok) {
+      throw new Error("Erro ao cadastrar membro.");
+    }
+    return response.json();
+  })
+  .then(data => {
+    alert("Membro cadastrado com sucesso!");
+    carregarMembros();
+    console.log("Resposta do servidor:", data);
+    document.getElementById("formMembro").reset();
+  })
+  .catch(error => {
+    console.error("Erro:", error);
+    alert("Falha ao cadastrar membro.");
+  });
+});
+
+  </script>
+</body>
+</html>

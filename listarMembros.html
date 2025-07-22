@@ -39,6 +39,7 @@
       <table class="table table-bordered table-striped table-hover">
         <thead class="table-dark">
           <tr>
+             <th>ID</th>
             <th>Nome</th>
             <th>Data Nasc.</th>
             <th>Gênero</th>
@@ -52,9 +53,92 @@
           <!-- Linhas serão inseridas via JS -->
         </tbody>
       </table>
+        <a class="btn btn-dark" href="./index.html" role="button">Página Principal</a>
     </div>
   </div>
 
+   <!-- Modal Editar Membro -->
+<div class="modal fade" id="modalEditarMembro" tabindex="-1" aria-labelledby="modalEditarMembroLabel" aria-hidden="false">
+  <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header bg-primary text-white">
+        <h1 class="modal-title fs-5" id="modalEditarMembroLabel">Editar Membro</h1>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
+      </div>
+
+      <div class="modal-body">
+        <form id="formEditarMembro">
+          <!-- ID oculto 
+         <input type="hidden" id="editarId" name="editarId">
+         -->
+         <div class="col-1">
+              <label for="editarId" class="form-label">Id</label>
+              <input type="text" class="form-control" id="editarId" readonly>
+            </div>
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label for="editarNome" class="form-label">Nome completo</label>
+              <input type="text" class="form-control" id="editarNome" required>
+            </div>
+
+            <div class="col-md-3">
+              <label for="editarDataNascimento" class="form-label">Data de nascimento</label>
+              <input type="date" class="form-control" id="editarDataNascimento" required>
+            </div>
+
+            <div class="col-md-3">
+              <label for="editarGenero" class="form-label">Gênero</label>
+              <select class="form-select" id="editarGenero" required>
+                <option value="" disabled>Selecione</option>
+                <option>MASCULINO</option>
+                <option>FEMININO</option>
+                <option>OUTRO</option>
+              </select>
+            </div>
+
+            <div class="col-md-4">
+              <label for="editarTelefone" class="form-label">Telefone</label>
+              <input type="tel" class="form-control" id="editarTelefone" required>
+            </div>
+
+            <div class="col-md-4">
+              <label for="editarEmail" class="form-label">E-mail</label>
+              <input type="email" class="form-control" id="editarEmail">
+            </div>
+
+            <div class="col-md-4">
+              <label for="editarFuncao" class="form-label">Função</label>
+              <select class="form-select" id="editarFuncao">
+                <option>PASTOR</option>
+                <option>OBREIRO</option>
+                <option>FIEL</option>
+                <option>VISITANTE</option>
+              </select>
+            </div>             
+            <div class="col-md-4">
+              <label class="form-label d-block">Está ativo?</label>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="editarAtivo" id="editarAtivoSim" value="true">
+                <label class="form-check-label" for="editarAtivoSim">Sim</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="editarAtivo" id="editarAtivoNao" value="false">
+                <label class="form-check-label" for="editarAtivoNao">Não</label>
+              </div>
+            </div>
+
+          </div><!-- row -->
+        </form>
+      </div><!-- modal-body -->
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        <!-- Este botão será ligado via JS para enviar atualização -->
+        <button type="button" class="btn btn-primary" onclick="atualizarMembro()">Salvar</button>
+      </div>
+    </div>
+  </div>
+</div>
   <script>
   async function carregarMembros() {
   try {
@@ -74,6 +158,7 @@
       const dataFormatada = m.dataNascimento;
 
       linha.innerHTML = `
+        <td>${m.id}</td>
         <td>${m.nome}</td>
         <td>${dataFormatada}</td>
         <td>${m.genero}</td>
@@ -81,7 +166,7 @@
         <td>${m.funcao}</td>
         <td>${m.ativo ? "Sim" : "Não"}</td>
         <td>
-          <button class="btn-icon edit" title="Editar" onclick="editarMembro(${m.id})">
+          <button type="button" class="btn-icon edit" title="Editar"onclick="editarMembro(${m.id})" data-bs-toggle="modal" data-bs-target="#modalEditarMembro">
             <i class="bi bi-pencil-square"></i>
           </button>
           <button class="btn-icon delete" title="Excluir" onclick="excluirMembro(${m.id})">
@@ -99,24 +184,123 @@
 }
 
 // Chamada inicial da função ao carregar a página
-window.addEventListener("DOMContentLoaded", carregarMembros);
+ window.addEventListener("DOMContentLoaded", carregarMembros);
 
-
-    function editarMembro(id) {
-      alert("Editar membro com ID: " + id);
-      // Aqui você poderá abrir um modal ou redirecionar para a página de edição
+       async function editarMembro(id) {
+     try {
+    const response = await fetch(`http://localhost:8080/api/membros/${id}`); // ajuste a URL conforme sua API
+    if (!response.ok) {
+      throw new Error("Erro ao buscar o membro.");
     }
 
-    function excluirMembro(id) {
-      const confirmar = confirm("Deseja realmente excluir o membro com ID: " + id + "?");
-      if (confirmar) {
-        alert("Membro excluído (simulação)");
-        // Aqui você pode chamar o backend para deletar ou remover da tabela dinamicamente
-      }
+    const membro = await response.json();
+
+    // Preenche os campos do modal (ajuste os IDs conforme os campos do seu modal)
+    document.getElementById('editarId').value = membro.id;
+    document.getElementById('editarNome').value = membro.nome;
+    document.getElementById('editarDataNascimento').value = membro.dataNascimento;
+    document.getElementById('editarGenero').value = membro.genero;
+    document.getElementById('editarTelefone').value = membro.telefone;
+    document.getElementById('editarEmail').value = membro.email;
+    document.getElementById('editarFuncao').value = membro.funcao;     
+    document.getElementById('editarAtivoSim').checked = membro.ativo === true;
+    document.getElementById('editarAtivoNao').checked = membro.ativo === false;
+    
+    document.activeElement.blur(); // remove o foco de quem disparou
+
+    /* Abre o modal
+    const modal = new bootstrap.Modal(document.getElementById('modalEditarMembro'));
+    modal.show();
+   */
+    
+    const modalElement = document.getElementById('modalEditarMembro');
+    const modal = bootstrap.Modal.getOrCreateInstance(modalElement);
+    modal.show();
+
+  } catch (error) {
+    console.error(error);
+    alert("Erro ao carregar dados do membro.");
+  }
+}
+
+  async function atualizarMembro() {
+  const id = document.getElementById("editarId").value;
+  const nome = document.getElementById("editarNome").value; 
+  const dataNascimento = document.getElementById("editarDataNascimento").value; 
+  const telefone = document.getElementById("editarTelefone").value;
+  const email = document.getElementById("editarEmail").value;
+  const genero = document.getElementById("editarGenero").value;
+  const funcao = document.getElementById("editarFuncao").value;
+ // const ativo = document.getElementById("editar-ativo").checked;
+  const ativo = document.querySelector('input[name="editarAtivo"]:checked').value === "true";
+
+  const membroAtualizado = {    
+    id,
+    nome,
+    dataNascimento,
+    telefone,
+    email,
+    genero,
+    funcao,
+    ativo
+  };
+
+  try {
+    const response = await fetch(`http://localhost:8080/api/membros`, {
+      method: "PUT", // ou "PATCH" se for atualização parcial
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(membroAtualizado)
+    });
+
+    if (!response.ok) {
+      throw new Error("Erro ao atualizar membro");
     }
 
-      
+    // Fecha o modal
+    const modalElement = document.getElementById("modalEditarMembro");
+    const modal = bootstrap.Modal.getInstance(modalElement);
+    modal.hide();
+
+    // Atualiza a tabela ou lista
+    carregarMembros(); // ou qualquer função que atualize a exibição
+    alert("Membro atualizado com sucesso!");
+  } catch (error) {
+    console.error(error);
+    alert("Erro ao atualizar membro.");
+  }
+}
+
+   async function excluirMembro(id) {
+  const confirmacao = confirm("Tem certeza que deseja excluir este membro?");
+  if (!confirmacao) return;
+
+  try {
+    const response = await fetch(`http://localhost:8080/api/membros/${id}`, {
+      method: "DELETE"
+    });
+
+    if (response.ok) {
+      alert("Membro excluído com sucesso!");
+      // Atualize a lista, recarregue a página ou remova o item da tabela
+      carregarMembros(); // ou location.reload();
+    } else {
+      const error = await response.text();
+      throw new Error(`Erro ao excluir: ${error}`);
+    }
+  } catch (erro) {
+    console.error("Erro:", erro);
+    alert("Erro ao tentar excluir o membro.");
+  }
+}
+
+
+   
   </script>
+  <!-- Bootstrap JS (versão 5+) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
 </body>
 </html>
 
